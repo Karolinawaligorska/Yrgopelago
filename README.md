@@ -1,16 +1,11 @@
-WHY NOT A GIF HERE? TO SET THE MOOD.
-
 # Island name
 
-Some text about your lovely island
+My island is called "Porcelain Paradise" and is teacup-themed.
 
 # Hotel name
 
-Why not add some info about the hotel of your dreams?
-
-# Instructions
-
-If your project requires some installation or similar, please inform your user 'bout it. For instance, if you want a more decent indentation of your .php files, you could edit [.editorconfig]('/.editorconfig').
+My hotel is called Tea-rrific Hotel since it's terrific and tea-themed.
+My hotel has one star and none counting, this is because i had some trubles with the cURL method i used for the APIs, which resulted in a lack of time to aim for a higher rating. The fact that my hotel is one-starred doesn't bother me much, i hope to get a lot of guests with my low prices!
 
 # Code review
 

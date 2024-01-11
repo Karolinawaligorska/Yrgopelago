@@ -1,1 +1,7 @@
-ADD SOME LICENSE HERE
+I am sorry to announce that I am not sure what to write about here.
+
+My code is structured into three seperate files, an index.php, that after all doesn't contain any php, and then two php files called "bookings.php" and "avaliability.php. I have also gotten fund of using separete css files, to easily keep track of my code.
+
+I am aware that i do not have 20 pushes to my Github repo. This is partly because I forgot about it so very sorry about that, and partly because I sometimes got so stuck that it was better to not push and start over from were I was before than to try to clean up the code that got me so confused in the first place.
+
+Cheers!

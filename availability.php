@@ -9,18 +9,6 @@ $dataBase = new PDO('sqlite:Yrgopelagooriginal.sqlite');
 $checkIn = $_POST['check_in_date'];
 $checkOut = $_POST['check_out_date'];
 
-//Booking details that will become json response
-$bookingDetails = [
-    "Island" => "Tea cup island",
-    "Hotel" => "Roibos Cozy Cottage",
-    "Arrival Date" => $checkIn,
-    "Departure Date" => $checkOut,
-    "Stars" => 1
-];
-
-//json encode booking details 
-$bookingDetailsJson = json_encode($bookingDetails);
-
 //room types 
 $roomType = $_POST['room_type'];
 
@@ -34,6 +22,8 @@ $roomTypeIds = [
 
 $roomId = $roomTypeIds[$roomType];
 
+$guestName = $_POST['name'];
+
 //base URL for yrgopelago bank
 $baseUrl = "https://www.yrgopelag.se/centralbank";
 
@@ -44,7 +34,7 @@ if (isset($checkIn) && isset($checkOut)) {
     WHERE room_id =:room_id
 
     /* check occupancy*/
-    AND NOT (check_out_date <= :check_in_date OR check_in_date >= :check_out_date)
+    AND NOT (check_out_date < :check_in_date OR check_in_date > :check_out_date)
     ");
 
     // bind params
@@ -56,8 +46,12 @@ if (isset($checkIn) && isset($checkOut)) {
     $occupied = $statementAvailabilty->fetchColumn();
 
     if ($occupied > 0) {
-        echo "Unforuntaly the hotel is booked during these dates";
+
+        echo "We are tea-rribly sorry but the chosen room is booked during these dates!";
     } else {
+
+
+        //insert occupancy
         $statementBooking = $dataBase->prepare("INSERT INTO occupancy(room_id, check_in_date, check_out_date)VALUES (:room_id, :check_in_date, :check_out_date)");
         //bind params
         $statementBooking->bindParam(':room_id', $roomId, PDO::PARAM_INT);
@@ -69,8 +63,40 @@ if (isset($checkIn) && isset($checkOut)) {
         $bookedDays = strtotime($checkOut) - strtotime($checkIn);
         //change time seconds to days/24 hours, add one day for the checkout day as well
         $bookedDays = $bookedDays / (60 * 60 * 24) + 1;
-        $totalCost = ($bookedDays * $roomId);
-        /* echo "Sucessfull booking! The total cost for your stay is $totalCost !";*/
+        $totalCost = ($bookedDays * $roomId * 2);
+
+        //Booking details that will become json response
+        $bookingDetails = [
+            "Island" => "Porcelain Paradise",
+            "Hotel" => "Tea-riffic Hotel",
+            "arrival_date" => $checkIn,
+            "departure_date" => $checkOut,
+            "Total_cost" => $totalCost,
+            "Stars" => 1,
+            "additional_info" => "Thank you for booking with Tea-riffic Hotel, have a Tea-riffic stay!"
+        ];
+
+        //json encode booking details 
+        $bookingDetailsJson = json_encode($bookingDetails);
+
+        echo $bookingDetailsJson;
+        echo "<br>";
+        echo '<a href="index.php">Go to homepage</a>';
+
+        //insert rooms
+        $statementRooms = $dataBase->prepare("INSERT INTO rooms (id, room_type, cost)VALUES (:room_id, :room_type, :total_cost)");
+        //bind params
+        $statementRooms->bindParam(':room_id', $roomId, PDO::PARAM_INT);
+        $statementRooms->bindParam(':room_type', $roomType, PDO::PARAM_STR);
+        $statementRooms->bindParam(':total_cost', $totalCost, PDO::PARAM_INT);
+        $statementRooms->execute();
+
+        //insert guest
+        $statementGuests = $dataBase->prepare("INSERT INTO guests (name, room_id) VALUES (:name, :room_id)");
+        //bind params
+        $statementGuests->bindParam(':room_id', $roomId, PDO::PARAM_INT);
+        $statementGuests->bindParam(':name', $guestName, PDO::PARAM_STR);
+        $statementGuests->execute();
 
         //check if transfercode is valid 
         //create own endpoint for checking transfercode
@@ -137,6 +163,7 @@ if (isset($checkIn) && isset($checkOut)) {
         $responseArray = json_decode($data, true);
     }
 }
+
 
 
 /*
