@@ -24,3 +24,26 @@ If your project requires some installation or similar, please inform your user '
 8. example.js:10-15 - Remember to think about X and this could be refactored using the amazing Y function.
 9. example.js:10-15 - Remember to think about X and this could be refactored using the amazing Y function.
 10. example.js:10-15 - Remember to think about X and this could be refactored using the amazing Y function.
+
+Create for database: 
+CREATE TABLE rooms (
+id INTEGER PRIMARY KEY,
+room_type varchar(80),
+cost INTEGER
+);
+
+CREATE TABLE guests (
+id INTEGER PRIMARY KEY,
+name varchar(80),
+room_id INTEGER,
+FOREIGN KEY (room_id) REFERENCES rooms (id)
+);
+
+CREATE TABLE occupancy (
+id INTEGER PRIMARY KEY,
+room_id INTEGER,
+check_in_date DATE,
+check_out_date DATE,
+is_occupied BOOLEAN,
+FOREIGN KEY (room_id) REFERENCES rooms (id)
+);
